@@ -41,7 +41,6 @@ namespace Plaatje
 			else {
 				Provider = string.Empty;
 			}
-			Log.Debug("myapp", "Using " + Provider + ".");
 
 			locMgr.RequestLocationUpdates(Provider, 1000, 1, this);
 
@@ -91,7 +90,7 @@ namespace Plaatje
 
 		public void plek(object o, EventArgs ea)
 		{
-			center.Text = "geklikt";
+			//De huidige locatie wordt gecentreerd op het scherm.
 			this.tekening.Sleep = new PointF((this.tekening.huidig.X + this.tekening.Utrecht.Width / 2), (this.tekening.huidig.Y + this.tekening.Utrecht.Height / 2));
 			this.tekening.invalidateScherm();
 		}
@@ -115,7 +114,6 @@ namespace Plaatje
 		protected override void OnResume()
 		{
 			base.OnResume();
-			Log.Debug("myapp", "TEST");
 			locMgr.RequestLocationUpdates(Provider, 1000, 1, this);
 		}
 
@@ -209,11 +207,8 @@ namespace Plaatje
 			huidig.X = (float)(Projectie.Geo2RD(loc).X - 136000.0);
 			huidig.Y = 5000 - (float)(Projectie.Geo2RD(loc).Y - 453000.0);
 
-			Log.Info(tag, huidig.X + " " + huidig.Y);
 			huidig.X = (float)(huidig.X * 0.4 - this.Utrecht.Width / 2);
 			huidig.Y = (float)(huidig.Y * 0.4 - this.Utrecht.Height / 2);
-
-			Log.Info(tag, huidig.X + " " + huidig.Y);
 
 			this.Invalidate();
 		}
