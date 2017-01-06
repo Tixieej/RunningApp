@@ -43,6 +43,8 @@ namespace Plaatje
 			}
 			Log.Debug("myapp", "Using " + Provider + ".");
 
+			locMgr.RequestLocationUpdates(Provider, 1000, 1, this);
+
 			tekening = new Scherm(this);
 			start = new Button(this);
 			clear = new Button(this);
@@ -90,7 +92,8 @@ namespace Plaatje
 		public void plek(object o, EventArgs ea)
 		{
 			center.Text = "geklikt";
-
+			this.tekening.Sleep = new PointF((this.tekening.huidig.X + this.tekening.Utrecht.Width / 2), (this.tekening.huidig.Y + this.tekening.Utrecht.Height / 2));
+			this.tekening.invalidateScherm();
 		}
 
 		public void OnLocationChanged(Location loc)
@@ -125,9 +128,9 @@ namespace Plaatje
 
 	public class Scherm : View
 	{
-		Bitmap Utrecht;
-		float Schaal, Hoek;
-		PointF v1, v2, s1, s2, Sleep, sleepbegin, kaartbegin, huidig;
+		public Bitmap Utrecht;
+		public float Schaal, Hoek;
+		public PointF v1, v2, s1, s2, Sleep, sleepbegin, kaartbegin, huidig;
 		float oudeSchaal;
 		GestureDetector draak;
 		LocationManager locMgr;
@@ -143,7 +146,7 @@ namespace Plaatje
 			/*SensorManager sm = (SensorManager)Context.GetSystemService(Context.SensorService);
 			sm.RegisterListener(this, sm.GetDefaultSensor(SensorType.Orientation), SensorDelay.Ui);
 */
-			Sleep = new PointF(-this.Utrecht.Width / 2, -this.Utrecht.Height / 2);//het punt linksboven
+			Sleep = new PointF(this.Utrecht.Width / 2, this.Utrecht.Height / 2);//het punt linksboven
 			this.Touch += RaakAan;
 
 			//locMgr = Context.GetSystemService(Context.LocationService) as LocationManager;
@@ -151,7 +154,12 @@ namespace Plaatje
 			//locMgr.RequestLocationUpdates(Provider, 2000, 1, this);
 
 			// Zet het punt voor nu even buiten de kaart omdat er nog geen gps-locatie is
-			huidig = new PointF(this.Width, this.Height);
+			huidig = new PointF(this.Width/2, this.Height/2);
+		}
+
+		public void invalidateScherm()
+		{
+			this.Invalidate();
 		}
 
 		protected override void OnDraw(Canvas c)
@@ -167,7 +175,7 @@ namespace Plaatje
 			//c.DrawText(Schaal.ToString(), 100, 50, verf);
 
 			Matrix mat = new Matrix(); // midden van scherm heeft coord (0,0)!
-			mat.PostTranslate(Sleep.X, Sleep.Y);
+			mat.PostTranslate(-Sleep.X, -Sleep.Y);
 			mat.PostScale(this.Schaal, this.Schaal);
 			//mat.PostRotate(-this.Hoek);
 			mat.PostTranslate(this.Width / 2, this.Height / 2);
