@@ -172,6 +172,9 @@ namespace Plaatje
 			//c.DrawText(Hoek.ToString(), 100, 20, verf);
 			//c.DrawText(Schaal.ToString(), 100, 50, verf);
 
+			/* De kaart van Utrecht wordt in een matrix gezet zodat we 'm
+			   op het canvas kunnen tekenen
+			*/
 			Matrix mat = new Matrix(); // midden van scherm heeft coord (0,0)!
 			mat.PostTranslate(-Sleep.X, -Sleep.Y);
 			mat.PostScale(this.Schaal, this.Schaal);
@@ -179,6 +182,7 @@ namespace Plaatje
 			mat.PostTranslate(this.Width / 2, this.Height / 2);
 			c.DrawBitmap(this.Utrecht, mat, verf);
 			verf.Color = Color.Red;
+
 			//teken een stip op je (huidige) locatie
 			//huidig = Projectie.Geo2RD(this.loc);
 			c.DrawCircle(Schaal * huidig.X + this.Width / 2, Schaal * huidig.Y + this.Height / 2, 10, verf);
@@ -204,6 +208,7 @@ namespace Plaatje
 
 		public void locationChanged(Location loc)
 		{
+			//huidig is het punt waar je bent in pixelcoordinaten op het scherm
 			huidig.X = (float)(Projectie.Geo2RD(loc).X - 136000.0);
 			huidig.Y = 5000 - (float)(Projectie.Geo2RD(loc).Y - 453000.0);
 
