@@ -92,6 +92,7 @@ namespace Plaatje
 		{
 			//De huidige locatie wordt gecentreerd op het scherm.
 			this.tekening.Sleep = new PointF((this.tekening.huidig.X + this.tekening.Utrecht.Width / 2), (this.tekening.huidig.Y + this.tekening.Utrecht.Height / 2));
+			this.tekening.Stip = new PointF(this.tekening.Width/2, this.tekening.Height/2);
 			this.tekening.invalidateScherm();
 		}
 
@@ -128,7 +129,7 @@ namespace Plaatje
 	{
 		public Bitmap Utrecht;
 		public float Schaal, Hoek;
-		public PointF v1, v2, s1, s2, Sleep, sleepbegin, kaartbegin, huidig;
+		public PointF v1, v2, s1, s2, Sleep, sleepbegin, kaartbegin, huidig, Stip;
 		float oudeSchaal;
 		GestureDetector draak;
 		LocationManager locMgr;
@@ -146,13 +147,15 @@ namespace Plaatje
 */
 			Sleep = new PointF(this.Utrecht.Width / 2, this.Utrecht.Height / 2);//het punt linksboven
 			this.Touch += RaakAan;
+			huidig = new PointF(this.Width / 2, this.Height / 2);
+			Stip = new PointF(Schaal * huidig.X + this.Width / 2, Schaal * huidig.Y + this.Height / 2);
 
 			//locMgr = Context.GetSystemService(Context.LocationService) as LocationManager;
 			//string Provider = LocationManager.GpsProvider;
 			//locMgr.RequestLocationUpdates(Provider, 2000, 1, this);
 
 			// Zet het punt voor nu even buiten de kaart omdat er nog geen gps-locatie is
-			huidig = new PointF(this.Width/2, this.Height/2);
+
 		}
 
 		public void invalidateScherm()
@@ -185,7 +188,7 @@ namespace Plaatje
 
 			//teken een stip op je (huidige) locatie
 			//huidig = Projectie.Geo2RD(this.loc);
-			c.DrawCircle(Schaal * huidig.X + this.Width / 2, Schaal * huidig.Y + this.Height / 2, 10, verf);
+			c.DrawCircle(Stip.X, Stip.Y, 10, verf);
 			//(float)(this.Width / 2 + (Sleep.X + 2445 * 0.4) * Schaal), (float)(this.Height / 2 + (Sleep.Y + 1405) * Schaal)
 		}
 
@@ -214,6 +217,8 @@ namespace Plaatje
 
 			huidig.X = (float)(huidig.X * 0.4 - this.Utrecht.Width / 2);
 			huidig.Y = (float)(huidig.Y * 0.4 - this.Utrecht.Height / 2);
+
+			Stip = new PointF(Schaal * huidig.X + this.Width / 2, Schaal * huidig.Y + this.Height / 2);
 
 			this.Invalidate();
 		}
