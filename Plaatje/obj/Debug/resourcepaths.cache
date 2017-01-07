@@ -1,11 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Paths>
   <AdditionalAndroidResourcePaths>
-    <AdditionalAndroidResourcePath>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.v7.AppCompat/20.0.0/content/support/v7/appcompat</AdditionalAndroidResourcePath>
+    <AdditionalAndroidResourcePath>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Compat/24.2.1/embedded</AdditionalAndroidResourcePath>
+    <AdditionalAndroidResourcePath>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Core.UI/24.2.1/embedded</AdditionalAndroidResourcePath>
+    <AdditionalAndroidResourcePath>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Core.Utils/24.2.1/embedded</AdditionalAndroidResourcePath>
+    <AdditionalAndroidResourcePath>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Media.Compat/24.2.1/embedded</AdditionalAndroidResourcePath>
+    <AdditionalAndroidResourcePath>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Fragment/24.2.1/embedded</AdditionalAndroidResourcePath>
+    <AdditionalAndroidResourcePath>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Vector.Drawable/24.2.1/embedded</AdditionalAndroidResourcePath>
+    <AdditionalAndroidResourcePath>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Animated.Vector.Drawable/24.2.1/embedded</AdditionalAndroidResourcePath>
+    <AdditionalAndroidResourcePath>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.v7.AppCompat/24.2.1/embedded</AdditionalAndroidResourcePath>
+    <AdditionalAndroidResourcePath>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.v13/24.2.1/embedded</AdditionalAndroidResourcePath>
+    <AdditionalAndroidResourcePath>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.v4/24.2.1/embedded</AdditionalAndroidResourcePath>
   </AdditionalAndroidResourcePaths>
   <AdditionalJavaLibraryReferences>
-    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.v13/20.0.0/content/support/v13/android-support-v13.jar</AdditionalJavaLibraryReference>
-    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.v7.AppCompat/20.0.0/content/support/v7/appcompat/libs/android-support-v7-appcompat.jar</AdditionalJavaLibraryReference>
+    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Compat/24.2.1/embedded/classes.jar</AdditionalJavaLibraryReference>
+    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Compat/24.2.1/embedded/libs/internal_impl-24.2.1.jar</AdditionalJavaLibraryReference>
+    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Core.UI/24.2.1/embedded/classes.jar</AdditionalJavaLibraryReference>
+    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Core.UI/24.2.1/embedded/libs/internal_impl-24.2.1.jar</AdditionalJavaLibraryReference>
+    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Core.Utils/24.2.1/embedded/classes.jar</AdditionalJavaLibraryReference>
+    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Core.Utils/24.2.1/embedded/libs/internal_impl-24.2.1.jar</AdditionalJavaLibraryReference>
+    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Media.Compat/24.2.1/embedded/classes.jar</AdditionalJavaLibraryReference>
+    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Media.Compat/24.2.1/embedded/libs/internal_impl-24.2.1.jar</AdditionalJavaLibraryReference>
+    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Fragment/24.2.1/embedded/classes.jar</AdditionalJavaLibraryReference>
+    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Fragment/24.2.1/embedded/libs/internal_impl-24.2.1.jar</AdditionalJavaLibraryReference>
+    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Vector.Drawable/24.2.1/embedded/classes.jar</AdditionalJavaLibraryReference>
+    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.Animated.Vector.Drawable/24.2.1/embedded/classes.jar</AdditionalJavaLibraryReference>
+    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.v7.AppCompat/24.2.1/embedded/classes.jar</AdditionalJavaLibraryReference>
+    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.v13/24.2.1/embedded/classes.jar</AdditionalJavaLibraryReference>
+    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.v13/24.2.1/embedded/libs/internal_impl-24.2.1.jar</AdditionalJavaLibraryReference>
+    <AdditionalJavaLibraryReference>/Users/rixt/.local/share/Xamarin/Xamarin.Android.Support.v4/24.2.1/embedded/classes.jar</AdditionalJavaLibraryReference>
   </AdditionalJavaLibraryReferences>
   <AdditionalNativeLibraryReferences />
 </Paths>

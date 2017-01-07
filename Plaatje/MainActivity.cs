@@ -27,22 +27,7 @@ namespace Plaatje
 		{
 			base.OnCreate(b);
 
-			locMgr = (LocationManager)GetSystemService(LocationService);
-			Criteria criteriaForLocationService = new Criteria
-			{
-				Accuracy = Accuracy.Fine
-			};
-			IList<string> acceptableLocationProviders = locMgr.GetProviders(criteriaForLocationService, true);
-
-			if (acceptableLocationProviders.Any())
-			{
-				Provider = acceptableLocationProviders.First();
-			}
-			else {
-				Provider = string.Empty;
-			}
-
-			locMgr.RequestLocationUpdates(Provider, 1000, 1, this);
+			initGps();
 
 			tekening = new Scherm(this);
 			start = new Button(this);
@@ -76,6 +61,32 @@ namespace Plaatje
 
 
 			this.SetContentView(stapel);
+		}
+
+		public void initGps()
+		{
+			locMgr = (LocationManager)GetSystemService(LocationService);
+			Criteria criteriaForLocationService = new Criteria
+			{
+				Accuracy = Accuracy.Fine
+			};
+			IList<string> acceptableLocationProviders = locMgr.GetProviders(criteriaForLocationService, true);
+
+			if (acceptableLocationProviders.Any())
+			{
+				Provider = acceptableLocationProviders.First();
+				locMgr.RequestLocationUpdates(Provider, 1000, 1, this);
+			}
+			else {
+				Provider = string.Empty;
+				//foutmelding als GPS uit staat
+				AlertDialog.Builder alert = new AlertDialog.Builder(this);
+				alert.SetTitle("Zet aub je GPS aan");
+				Dialog dialog = alert.Create();
+				dialog.Show();
+			}
+
+			//if(Provider != string.Empty)
 		}
 
 		public void begin(object o, EventArgs ea)
@@ -115,7 +126,7 @@ namespace Plaatje
 		protected override void OnResume()
 		{
 			base.OnResume();
-			locMgr.RequestLocationUpdates(Provider, 1000, 1, this);
+			initGps();
 		}
 
 		protected override void OnPause()

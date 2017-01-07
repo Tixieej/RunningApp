@@ -1,7 +1,7 @@
 ﻿<Properties StartupConfiguration="{5710A9CC-5F39-4135-B039-5737926E141F}|Default">
   <MonoDevelop.Ide.Workbench ActiveDocument="Plaatje/MainActivity.cs">
     <Files>
-      <File FileName="Plaatje/MainActivity.cs" Line="154" Column="73" />
+      <File FileName="Plaatje/MainActivity.cs" Line="86" Column="21" />
       <File FileName="Plaatje/Properties/AndroidManifest.xml" Line="7" Column="12" />
       <File FileName="../GooglyEyes/GooglyEyes/MainActivity.cs" Line="22" Column="19" NotebookId="1" />
       <File FileName="../../Documents/Studie/Mobiel Programmeren/MopApps/Kompas/KompasView.cs" Line="40" Column="1" NotebookId="1" />
@@ -14,5 +14,5 @@
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.ItemProperties.Plaatje PreferredExecutionTarget="Android.Android_Accelerated_x86" />
+  <MonoDevelop.Ide.ItemProperties.Plaatje PreferredExecutionTarget="Android.7d0cc24c" />
 </Properties>

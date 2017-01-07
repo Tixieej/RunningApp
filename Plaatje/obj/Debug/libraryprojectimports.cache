@@ -1,14 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Paths>
   <Jars></Jars>
-  <ResolvedResourceDirectories>
-    <ResolvedResourceDirectory>/Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/__library_projects__/Xamarin.Android.Support.v4/library_project_imports/res</ResolvedResourceDirectory>
-  </ResolvedResourceDirectories>
-  <ResolvedAssetDirectories>
-    <ResolvedAssetDirectory>obj/Debug/__library_projects__/Xamarin.Android.Support.v4/library_project_imports/assets</ResolvedAssetDirectory>
-  </ResolvedAssetDirectories>
+  <ResolvedResourceDirectories />
+  <ResolvedAssetDirectories />
   <ResolvedEnvironmentFiles />
-  <ResolvedResourceDirectoryStamps>
-    <ResolvedResourceDirectoryStamp>/Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/__library_projects__/Xamarin.Android.Support.v4.stamp</ResolvedResourceDirectoryStamp>
-  </ResolvedResourceDirectoryStamps>
+  <ResolvedResourceDirectoryStamps />
 </Paths>

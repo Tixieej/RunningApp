@@ -5,9 +5,16 @@
 /Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/Mono.Android.dll
 /Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/Java.Interop.dll
 /Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/System.Runtime.dll
+/Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/Xamarin.Android.Support.Compat.dll
+/Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/Xamarin.Android.Support.Core.UI.dll
+/Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/Xamarin.Android.Support.Core.Utils.dll
+/Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/Xamarin.Android.Support.Media.Compat.dll
+/Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/Xamarin.Android.Support.Fragment.dll
+/Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/Xamarin.Android.Support.Vector.Drawable.dll
+/Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/Xamarin.Android.Support.Animated.Vector.Drawable.dll
+/Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/Xamarin.Android.Support.v7.AppCompat.dll
 /Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/Xamarin.Android.Support.v13.dll
 /Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/Xamarin.Android.Support.v4.dll
-/Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/Xamarin.Android.Support.v7.AppCompat.dll
 /Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/mscorlib.dll
 /Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/System.Net.Http.dll
 /Users/rixt/Projects/Plaatje/Plaatje/obj/Debug/android/assets/System.Runtime.Serialization.dll
