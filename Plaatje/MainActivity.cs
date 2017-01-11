@@ -81,7 +81,7 @@ namespace Plaatje
 				Provider = string.Empty;
 				//foutmelding als GPS uit staat
 				AlertDialog.Builder alert = new AlertDialog.Builder(this);
-				alert.SetTitle("Zet aub je GPS aan");
+				alert.SetTitle("Zet aub uw GPS aan");
 				Dialog dialog = alert.Create();
 				dialog.Show();
 			}
@@ -102,7 +102,7 @@ namespace Plaatje
 		public void plek(object o, EventArgs ea)
 		{
 			//De huidige locatie wordt gecentreerd op het scherm.
-			this.tekening.Sleep = new PointF((this.tekening.huidig.X + this.tekening.Utrecht.Width / 2), (this.tekening.huidig.Y + this.tekening.Utrecht.Height / 2));
+			this.tekening.KaartPositie = new PointF((this.tekening.huidig.X + this.tekening.Utrecht.Width / 2), (this.tekening.huidig.Y + this.tekening.Utrecht.Height / 2));
 			this.tekening.Stip = new PointF(this.tekening.Width/2, this.tekening.Height/2);
 			this.tekening.invalidateScherm();
 		}
@@ -140,11 +140,12 @@ namespace Plaatje
 	{
 		public Bitmap Utrecht;
 		public float Schaal, Hoek;
-		public PointF v1, v2, s1, s2, Sleep, sleepbegin, kaartbegin, huidig, Stip;
+		public PointF v1, v2, s1, s2, KaartPositie, sleepbegin, kaartbegin, huidig, Stip;
 		float oudeSchaal;
 		GestureDetector draak;
 		LocationManager locMgr;
 		string tag = "myapp";
+		List<PointF> route = new List<PointF>();
 			
 		public Scherm(ContextThemeWrapper context) : base(context)
 		{
@@ -156,7 +157,7 @@ namespace Plaatje
 			/*SensorManager sm = (SensorManager)Context.GetSystemService(Context.SensorService);
 			sm.RegisterListener(this, sm.GetDefaultSensor(SensorType.Orientation), SensorDelay.Ui);
 */
-			Sleep = new PointF(this.Utrecht.Width / 2, this.Utrecht.Height / 2);//het punt linksboven
+			KaartPositie = new PointF(this.Utrecht.Width / 2, this.Utrecht.Height / 2);//het punt linksboven
 			this.Touch += RaakAan;
 			huidig = new PointF(this.Width / 2, this.Height / 2);
 			Stip = new PointF(Schaal * huidig.X + this.Width / 2, Schaal * huidig.Y + this.Height / 2);
@@ -190,7 +191,7 @@ namespace Plaatje
 			   op het canvas kunnen tekenen
 			*/
 			Matrix mat = new Matrix(); // midden van scherm heeft coord (0,0)!
-			mat.PostTranslate(-Sleep.X, -Sleep.Y);
+			mat.PostTranslate(-KaartPositie.X, -KaartPositie.Y);
 			mat.PostScale(this.Schaal, this.Schaal);
 			//mat.PostRotate(-this.Hoek);
 			mat.PostTranslate(this.Width / 2, this.Height / 2);
@@ -201,6 +202,7 @@ namespace Plaatje
 			//huidig = Projectie.Geo2RD(this.loc);
 			c.DrawCircle(Stip.X, Stip.Y, 10, verf);
 			//(float)(this.Width / 2 + (Sleep.X + 2445 * 0.4) * Schaal), (float)(this.Height / 2 + (Sleep.Y + 1405) * Schaal)
+
 		}
 
 		/*public void OnSensorChanged(SensorEvent e)
@@ -223,12 +225,14 @@ namespace Plaatje
 		public void locationChanged(Location loc)
 		{
 			//huidig is het punt waar je bent in pixelcoordinaten op het scherm
+			//de berekening doen we in twee stappen, hier van Geo naar RD
 			huidig.X = (float)(Projectie.Geo2RD(loc).X - 136000.0);
 			huidig.Y = 5000 - (float)(Projectie.Geo2RD(loc).Y - 453000.0);
-
+			//hier worden de coordinaten van RD naar schermpixels omgerekend
 			huidig.X = (float)(huidig.X * 0.4 - this.Utrecht.Width / 2);
 			huidig.Y = (float)(huidig.Y * 0.4 - this.Utrecht.Height / 2);
 
+			//en we tekenen een rode stip op de huidige positie
 			Stip = new PointF(Schaal * huidig.X + this.Width / 2, Schaal * huidig.Y + this.Height / 2);
 
 			this.Invalidate();
@@ -240,11 +244,13 @@ namespace Plaatje
 
 		public void RaakAan(object o, TouchEventArgs tea)
 		{
+			//vinger1 raakt het scherm aan, hiervan willen we de positie weten
 			v1 = new PointF(tea.Event.GetX(0), tea.Event.GetY(0));
 
 			//pinchgedeelte
 			if (tea.Event.PointerCount == 2)
 			{
+				//ook de tweede vinger heeft een positie
 				v2 = new PointF(tea.Event.GetX(1), tea.Event.GetY(1));
 				if (tea.Event.Action == MotionEventActions.Pointer2Down)
 				{//zodra 2e vinger op scherm: dit zijn de coordinaten.
@@ -252,11 +258,12 @@ namespace Plaatje
 					s2 = v2;
 					oudeSchaal = Schaal; //en dit is de startschaal
 				}
-
+				//Als je pincht verandert de afstand tussen vingers van oud naar nieuw
 				float oud = afstand(s1, s2);
 				float nieuw = afstand(v1, v2);
 				if (oud != 0 && nieuw != 0)
 				{
+					//we berekenen hoeveel er is ingezoomd dus hoeveel groter het plaatje moet worden
 					float factor = nieuw / oud;
 					this.Schaal = (float)(oudeSchaal * factor);
 					this.Invalidate();
@@ -267,17 +274,20 @@ namespace Plaatje
 			//draggedeelte
 			if (tea.Event.PointerCount == 1)
 			{
-				/*if (tea.Event.Action == MotionEventActions.Down)
+
+				if (tea.Event.Action == MotionEventActions.Down)
 				{
 					sleepbegin = v1;
-					kaartbegin = Sleep;
+					kaartbegin = KaartPositie;
 					// zet begin-punt
 				}
 
 				if (tea.Event.Action == MotionEventActions.Move)
 				{
-					this.Sleep.X = kaartbegin.X + (v1.X - sleepbegin.X)/2;
-				}*/
+					this.KaartPositie.X = kaartbegin.X - (v1.X - sleepbegin.X);
+					this.KaartPositie.Y = kaartbegin.Y - (v1.Y - sleepbegin.Y);
+					sleepbegin = v1;
+				}
 				//s1 = v1;
 				//mat.PostTranslate(-this.Utrecht.Width / 2, -this.Utrecht.Height / 2);
 				//if (tea.Event.Action == MotionEventActions.PointerIdShift);
@@ -294,112 +304,113 @@ namespace Plaatje
 			}
 		}
 
-		class Projectie
+	}
+
+	class Projectie
+	{
+		private const double fi0 = 52.15517440;
+		private const double lam0 = 5.38720621;
+		private const double x0 = 155000.00;
+		private const double y0 = 463000.00;
+
+		// Conversie van RD naar Geografisch
+		// Parameter rd bevat X- en Y-coordinaat in RD-projectie
+		// Resultaat bevat de latitude (breedtegraad, bijvoorbeeld 52 graden Noorderbreedte)
+		//              en de longitude (lengtegraad, bijvoorbeeld 5 graden Oosterlengte)
+
+		public static Location RD2Geo(PointF rd)
 		{
-			private const double fi0 = 52.15517440;
-			private const double lam0 = 5.38720621;
-			private const double x0 = 155000.00;
-			private const double y0 = 463000.00;
+			double x = (rd.X - x0) * 1E-5;
+			double y = (rd.Y - y0) * 1E-5;
 
-			// Conversie van RD naar Geografisch
-			// Parameter rd bevat X- en Y-coordinaat in RD-projectie
-			// Resultaat bevat de latitude (breedtegraad, bijvoorbeeld 52 graden Noorderbreedte)
-			//              en de longitude (lengtegraad, bijvoorbeeld 5 graden Oosterlengte)
+			double x2 = x * x;
+			double x3 = x2 * x;
+			double x4 = x3 * x;
+			double x5 = x4 * x;
+			double y2 = y * y;
+			double y3 = y2 * y;
+			double y4 = y3 * y;
 
-			public static Location RD2Geo(PointF rd)
-			{
-				double x = (rd.X - x0) * 1E-5;
-				double y = (rd.Y - y0) * 1E-5;
+			double fi = fi0 +
+					  (3235.65389 * y
+					  - 32.58297 * x2
+					  - 0.24750 * y2
+					  - 0.84978 * x2 * y
+					  - 0.06550 * y3
+					  - 0.01709 * x2 * y2
+					  - 0.00738 * x
+					  + 0.00530 * x4
+					  - 0.00039 * x2 * y3
+					  + 0.00033 * x4 * y
+					  - 0.00012 * x * y
+					  ) / 3600;
 
-				double x2 = x * x;
-				double x3 = x2 * x;
-				double x4 = x3 * x;
-				double x5 = x4 * x;
-				double y2 = y * y;
-				double y3 = y2 * y;
-				double y4 = y3 * y;
+			double lam = lam0 +
+					   (5260.52916 * x
+					   + 105.94684 * x * y
+					   + 2.45656 * x * y2
+					   - 0.81885 * x3
+					   + 0.05594 * x * y3
+					   - 0.05607 * x3 * y
+					   + 0.01199 * y
+					   - 0.00256 * x3 * y2
+					   + 0.00128 * x * y4
+					   + 0.00022 * y2
+					   - 0.00022 * x2
+					   + 0.00026 * x5
+					   ) / 3600;
 
-				double fi = fi0 +
-						  (3235.65389 * y
-						  - 32.58297 * x2
-						  - 0.24750 * y2
-						  - 0.84978 * x2 * y
-						  - 0.06550 * y3
-						  - 0.01709 * x2 * y2
-						  - 0.00738 * x
-						  + 0.00530 * x4
-						  - 0.00039 * x2 * y3
-						  + 0.00033 * x4 * y
-						  - 0.00012 * x * y
-						  ) / 3600;
-
-				double lam = lam0 +
-						   (5260.52916 * x
-						   + 105.94684 * x * y
-						   + 2.45656 * x * y2
-						   - 0.81885 * x3
-						   + 0.05594 * x * y3
-						   - 0.05607 * x3 * y
-						   + 0.01199 * y
-						   - 0.00256 * x3 * y2
-						   + 0.00128 * x * y4
-						   + 0.00022 * y2
-						   - 0.00022 * x2
-						   + 0.00026 * x5
-						   ) / 3600;
-
-				Location loc = new Location("");
-				loc.Latitude = fi;
-				loc.Longitude = lam;
-				return loc;
-			}
+			Location loc = new Location("");
+			loc.Latitude = fi;
+			loc.Longitude = lam;
+			return loc;
+		}
 
 
-			// Conversie van Geografisch naar RD
-			// Parameter geo bevat de latitude (breedtegraad, bijvoorbeeld 52 graden Noorderbreedte)
-			//                  en de longitude (lengtegraad, bijvoorbeeld 5 graden Oosterlengte)
-			// Resultaat bevat X- en Y-coordinaat in RD-projectie
+		// Conversie van Geografisch naar RD
+		// Parameter geo bevat de latitude (breedtegraad, bijvoorbeeld 52 graden Noorderbreedte)
+		//                  en de longitude (lengtegraad, bijvoorbeeld 5 graden Oosterlengte)
+		// Resultaat bevat X- en Y-coordinaat in RD-projectie
 
-			public static PointF Geo2RD(Location geo)
-			{
-				double fi = geo.Latitude;
-				double lam = geo.Longitude;
+		public static PointF Geo2RD(Location geo)
+		{
+			double fi = geo.Latitude;
+			double lam = geo.Longitude;
 
-				double dFi = 0.36 * (fi - fi0);
-				double dLam = 0.36 * (lam - lam0);
+			double dFi = 0.36 * (fi - fi0);
+			double dLam = 0.36 * (lam - lam0);
 
-				double dFi2 = dFi * dFi;
-				double dFi3 = dFi2 * dFi;
-				double dLam2 = dLam * dLam;
-				double dLam3 = dLam2 * dLam;
-				double dLam4 = dLam3 * dLam;
+			double dFi2 = dFi * dFi;
+			double dFi3 = dFi2 * dFi;
+			double dLam2 = dLam * dLam;
+			double dLam3 = dLam2 * dLam;
+			double dLam4 = dLam3 * dLam;
 
-				double x = x0
-						 + 190094.945 * dLam
-						 - 11832.228 * dFi * dLam
-						 - 114.221 * dFi2 * dLam
-						 - 32.391 * dLam3
-						 - 0.705 * dFi
-						 - 2.340 * dFi3 * dLam
-						 - 0.608 * dFi * dLam3
-						 - 0.008 * dLam2
-						 + 0.148 * dFi2 * dLam3;
+			double x = x0
+					 + 190094.945 * dLam
+					 - 11832.228 * dFi * dLam
+					 - 114.221 * dFi2 * dLam
+					 - 32.391 * dLam3
+					 - 0.705 * dFi
+					 - 2.340 * dFi3 * dLam
+					 - 0.608 * dFi * dLam3
+					 - 0.008 * dLam2
+					 + 0.148 * dFi2 * dLam3;
 
-				double y = y0
-						 + 309056.544 * dFi
-						 + 3638.893 * dLam2
-						 + 73.077 * dFi2
-						 - 157.984 * dFi * dLam2
-						 + 59.788 * dFi3
-						 + 0.433 * dLam
-						 - 6.439 * dFi2 * dLam2
-						 - 0.032 * dFi * dLam
-						 + 0.092 * dLam4
-						 - 0.054 * dFi * dLam4;
+			double y = y0
+					 + 309056.544 * dFi
+					 + 3638.893 * dLam2
+					 + 73.077 * dFi2
+					 - 157.984 * dFi * dLam2
+					 + 59.788 * dFi3
+					 + 0.433 * dLam
+					 - 6.439 * dFi2 * dLam2
+					 - 0.032 * dFi * dLam
+					 + 0.092 * dLam4
+					 - 0.054 * dFi * dLam4;
 
-				PointF rd = new PointF((float)x, (float)y);
-				return rd;
-			}
+			PointF rd = new PointF((float)x, (float)y);
+			return rd;
 		}
 	}
 }
