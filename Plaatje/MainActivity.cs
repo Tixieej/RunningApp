@@ -18,8 +18,9 @@ namespace Plaatje
 	{
 		Scherm tekening;
 		Button start, clear, center;
-		Location huidige;
+		Location huidig;
 		LocationManager locMgr;
+
 
 		string Provider;
 
@@ -75,7 +76,7 @@ namespace Plaatje
 			if (acceptableLocationProviders.Any())
 			{
 				Provider = acceptableLocationProviders.First();
-				locMgr.RequestLocationUpdates(Provider, 1000, 1, this);
+				locMgr.RequestLocationUpdates(Provider, 2000, 1, this);
 			}
 			else {
 				Provider = string.Empty;
@@ -86,17 +87,46 @@ namespace Plaatje
 				dialog.Show();
 			}
 
-			//if(Provider != string.Empty)
 		}
 
 		public void begin(object o, EventArgs ea)
 		{
-			start.Text = "geklikt";
+			if (!this.tekening.lijstbijhouden)
+			{
+				//als er op start gedrukt wordt: vraag huidige locatie op en stop in lijst
+				//vraag dan om de zoveel meters of sec opnieuw locatie op en stop in lijst
+				this.tekening.lijstbijhouden = true;
+				start.Text = "Stop";
+				this.tekening.route.Add(this.tekening.Stip);
+			}
+			else
+			{
+				this.tekening.lijstbijhouden = false;
+				start.Text = "Start";
+			}
+			this.tekening.invalidateScherm();
+
 		}
 
 		public void weg(object o, EventArgs ea)
 		{
-			clear.Text = "geklikt";
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			alert.SetTitle("Weet u zeker dat u de route wilt verwijderen?");
+			alert.SetNegativeButton("nee", NietWeg);
+			alert.SetPositiveButton("ja", WelWeg);
+			alert.Show();
+		}
+
+		protected void NietWeg(object o, EventArgs ea)
+		{
+			
+		}
+		protected void WelWeg(object o, EventArgs ea)
+		{
+			//maak de route leeg, hij verdwijnt van de kaart
+			this.tekening.lijstbijhouden = false;
+			this.tekening.route.Clear();
+			this.tekening.invalidateScherm();
 		}
 
 		public void plek(object o, EventArgs ea)
@@ -142,10 +172,10 @@ namespace Plaatje
 		public float Schaal, Hoek;
 		public PointF v1, v2, s1, s2, KaartPositie, sleepbegin, kaartbegin, huidig, Stip;
 		float oudeSchaal;
-		GestureDetector draak;
 		LocationManager locMgr;
 		string tag = "myapp";
-		List<PointF> route = new List<PointF>();
+		public List<PointF> route = new List<PointF>();
+		public Boolean lijstbijhouden = false;
 			
 		public Scherm(ContextThemeWrapper context) : base(context)
 		{
@@ -154,18 +184,10 @@ namespace Plaatje
 			opt.InScaled = false;
 			Utrecht = BitmapFactory.DecodeResource(context.Resources, Resource.Drawable.Utrecht, opt);
 
-			/*SensorManager sm = (SensorManager)Context.GetSystemService(Context.SensorService);
-			sm.RegisterListener(this, sm.GetDefaultSensor(SensorType.Orientation), SensorDelay.Ui);
-*/
 			KaartPositie = new PointF(this.Utrecht.Width / 2, this.Utrecht.Height / 2);//het punt linksboven
 			this.Touch += RaakAan;
 			huidig = new PointF(this.Width / 2, this.Height / 2);
 			Stip = new PointF(Schaal * huidig.X + this.Width / 2, Schaal * huidig.Y + this.Height / 2);
-
-			//locMgr = Context.GetSystemService(Context.LocationService) as LocationManager;
-			//string Provider = LocationManager.GpsProvider;
-			//locMgr.RequestLocationUpdates(Provider, 2000, 1, this);
-
 			// Zet het punt voor nu even buiten de kaart omdat er nog geen gps-locatie is
 
 		}
@@ -184,8 +206,6 @@ namespace Plaatje
 			
 			Paint verf = new Paint();
 			verf.TextSize = 30;
-			//c.DrawText(Hoek.ToString(), 100, 20, verf);
-			//c.DrawText(Schaal.ToString(), 100, 50, verf);
 
 			/* De kaart van Utrecht wordt in een matrix gezet zodat we 'm
 			   op het canvas kunnen tekenen
@@ -193,27 +213,19 @@ namespace Plaatje
 			Matrix mat = new Matrix(); // midden van scherm heeft coord (0,0)!
 			mat.PostTranslate(-KaartPositie.X, -KaartPositie.Y);
 			mat.PostScale(this.Schaal, this.Schaal);
-			//mat.PostRotate(-this.Hoek);
 			mat.PostTranslate(this.Width / 2, this.Height / 2);
 			c.DrawBitmap(this.Utrecht, mat, verf);
 			verf.Color = Color.Red;
 
 			//teken een stip op je (huidige) locatie
 			//huidig = Projectie.Geo2RD(this.loc);
-			c.DrawCircle(Stip.X, Stip.Y, 10, verf);
-			//(float)(this.Width / 2 + (Sleep.X + 2445 * 0.4) * Schaal), (float)(this.Height / 2 + (Sleep.Y + 1405) * Schaal)
-
+			c.DrawCircle(Stip.X + ((this.Utrecht.Width / 2) - KaartPositie.X) * Schaal, Stip.Y + ((this.Utrecht.Height / 2) - KaartPositie.Y) * Schaal, 10, verf);
+			verf.Color = Color.Purple;
+			foreach (var i in this.route)
+			{
+				c.DrawCircle(i.X + ((this.Utrecht.Width / 2) - KaartPositie.X) * Schaal, i.Y + ((this.Utrecht.Height / 2) - KaartPositie.Y) * Schaal, 5, verf);
+			}
 		}
-
-		/*public void OnSensorChanged(SensorEvent e)
-		{
-			this.Hoek = e.Values[0];
-			this.Invalidate();
-		}
-
-		public void OnAccuracyChanged(Sensor s, SensorStatus accuracy)
-		{
-		}*/
 
 		static float afstand(PointF p1, PointF p2)
 		{
@@ -235,12 +247,17 @@ namespace Plaatje
 			//en we tekenen een rode stip op de huidige positie
 			Stip = new PointF(Schaal * huidig.X + this.Width / 2, Schaal * huidig.Y + this.Height / 2);
 
-			this.Invalidate();
+			//als afstand tussen laatste element en stip groot genoeg is, voeg stip toe aan lijst
+			if (lijstbijhouden)
+			{
+				if (afstand(Stip, route.Last()) > 4)
+				{
+					this.route.Add(Stip);
+				}
+
+				this.Invalidate();
+			}
 		}
-
-
-
-
 
 		public void RaakAan(object o, TouchEventArgs tea)
 		{
@@ -270,29 +287,25 @@ namespace Plaatje
 				}
 			}
 
-
 			//draggedeelte
 			if (tea.Event.PointerCount == 1)
 			{
 
 				if (tea.Event.Action == MotionEventActions.Down)
 				{
+					// zet beginpunt
 					sleepbegin = v1;
 					kaartbegin = KaartPositie;
-					// zet begin-punt
 				}
 
 				if (tea.Event.Action == MotionEventActions.Move)
 				{
+					//de gesleepte afstand = de verandering
 					this.KaartPositie.X = kaartbegin.X - (v1.X - sleepbegin.X);
 					this.KaartPositie.Y = kaartbegin.Y - (v1.Y - sleepbegin.Y);
 					sleepbegin = v1;
 				}
-				//s1 = v1;
-				//mat.PostTranslate(-this.Utrecht.Width / 2, -this.Utrecht.Height / 2);
-				//if (tea.Event.Action == MotionEventActions.PointerIdShift);
 
-				//this.Sleep = (-c.Utrecht.Width / 2,  -c.Utrecht.Height / 2);
 				this.Invalidate();
 			}
 
@@ -306,6 +319,16 @@ namespace Plaatje
 
 	}
 
+	/*
+Deze klasse bevat conversiemethodes tussen
+ - geografische coordinaten (op de gebruikelijke WGS84 ellipsoide)
+ - coordinaten in de RD (Rijksdriehoekmeting)-projectie van de Topografische Dienst Nederland/Het Kadaster
+
+De methodes zijn gebaseerd op de beschrijving in:
+    F.H. Schreutelkamp en G.L. Strang van Hees:
+    "Benaderingsformules voor de transformatie tussen RD- en WGS84-kaartcoordinaten"
+    in _Geodesia_  *43* (2001), pp. 64-69.
+*/
 	class Projectie
 	{
 		private const double fi0 = 52.15517440;
@@ -414,16 +437,3 @@ namespace Plaatje
 		}
 	}
 }
-
-
-/*
-Deze klasse bevat conversiemethodes tussen
- - geografische coordinaten (op de gebruikelijke WGS84 ellipsoide)
- - coordinaten in de RD (Rijksdriehoekmeting)-projectie van de Topografische Dienst Nederland/Het Kadaster
-
-De methodes zijn gebaseerd op de beschrijving in:
-    F.H. Schreutelkamp en G.L. Strang van Hees:
-    "Benaderingsformules voor de transformatie tussen RD- en WGS84-kaartcoordinaten"
-    in _Geodesia_  *43* (2001), pp. 64-69.
-*/
-
